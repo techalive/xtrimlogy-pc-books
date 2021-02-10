@@ -1,25 +1,25 @@
-package us.awardspace.tekkno.xtrimlogy;
+package us.awardspace.tekkno.xtrimlogy.catalog.domain;
 
+
+import lombok.*;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Book {
-    Long id;
-    String title;
-    String author;
-    Integer year;
+   private Long id;
+   private String title;
+   private String author;
+   private Integer year;
+   private BigDecimal price;
 
-    public Book(Long id, String title, String author, Integer year) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.year = year;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", year=" + year +
-                '}';
-    }
+   public Book(String title, String author, Integer year, BigDecimal price) {
+      this.title = title;
+      this.author = author;
+      this.year = year;
+      this.price = price;
+   }
 }
