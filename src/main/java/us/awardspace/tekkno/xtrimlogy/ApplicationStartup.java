@@ -23,12 +23,16 @@ import java.util.List;
 public class ApplicationStartup implements CommandLineRunner {
 
     private final CatalogUseCase catalog;
+    private final PlaceOrderUseCase placeOrder;
+    private final QueryOrderUseCase queryOrder;
     private final String title;
     private final String author;
     private final Long limit;
 
     public ApplicationStartup(CatalogUseCase catalog, PlaceOrderUseCase placeOrder, QueryOrderUseCase queryOrder, @Value("${xtrimlogy.catalog.query.title}") String title, @Value("${xtrimlogy.catalog.query.author}") String author, @Value("${xtrimlogy.catalog.limit}") Long limit) {
         this.catalog = catalog;
+        this.placeOrder = placeOrder;
+        this.queryOrder = queryOrder;
         this.title = title;
         this.author = author;
         this.limit = limit;
@@ -82,11 +86,11 @@ public class ApplicationStartup implements CommandLineRunner {
     }
 
     private void initData() {
-        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", "Tonny Gaddis", 2019, new BigDecimal ("21,90")));
-        catalog.addBook(new CreateBookCommand("Czysty kod", "C. Martin", 2018, new BigDecimal ("29,90")));
-        catalog.addBook(new CreateBookCommand("Kompedium programisty, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("49,90")));
-        catalog.addBook(new CreateBookCommand("Kompedium javowca, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("48,90")));
-        catalog.addBook(new CreateBookCommand("Efektywne programowanie", "Joshua Bloch", 2019, new BigDecimal ("47,90")));
+        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", "Tonny Gaddis", 2019, new BigDecimal ("21.90")));
+        catalog.addBook(new CreateBookCommand("Czysty kod", "C. Martin", 2018, new BigDecimal ("29.90")));
+        catalog.addBook(new CreateBookCommand("Kompedium programisty, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("49.90")));
+        catalog.addBook(new CreateBookCommand("Kompedium javowca, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("48.90")));
+        catalog.addBook(new CreateBookCommand("Efektywne programowanie", "Joshua Bloch", 2019, new BigDecimal ("47.90")));
     }
 
     private void findByAuthor() {
