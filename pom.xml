@@ -14,30 +14,53 @@
 	<name>Xtrimlogy PC Books</name>
 	<description>Bookstore for IT trends &amp; news</description>
 
+
 	<properties>
 		<java.version>11</java.version>
 		<lombok.version>1.18.16</lombok.version>
+		<hibernate.validator.version>6.1.5.Final</hibernate.validator.version>
+		<commons.lang.version>3.11</commons.lang.version>
+		<springdoc.openapi.ui.version>1.4.6</springdoc.openapi.ui.version>
 	</properties>
 
+
 	<dependencies>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>${springdoc.openapi.ui.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons.lang.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>
