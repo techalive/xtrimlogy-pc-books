@@ -1,7 +1,6 @@
 package us.awardspace.tekkno.xtrimlogy.order.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,5 +23,6 @@ public class Order {
                 .map(item -> item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
 
 }

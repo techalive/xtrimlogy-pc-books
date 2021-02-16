@@ -46,6 +46,11 @@ public class ApplicationStartup implements CommandLineRunner {
     }
 
     private void placeOrder() {
+        firstOrder();
+        secondOrder();
+    }
+
+    private void firstOrder() {
         Book efektywneProgramowanie = catalog.findOneByTitle("Efektywne programowanie")
                 .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
         Book czystyKod = catalog.findOneByTitle("Czysty kod")
@@ -68,7 +73,38 @@ public class ApplicationStartup implements CommandLineRunner {
                 .item(new OrderItem(czystyKod, 50))
                 .build();
 
+        orderSummary(command);
+    }
+
+    private void secondOrder() {
+        Book javaKompendium = catalog.findOneByTitle("Kompedium programisty, wyd. X")
+                .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
+        Book javowcaKompendium = catalog.findOneByTitle("Kompendium programisty Javy, wyd XI")
+                .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
+
+        Recipient recipient = Recipient
+                .builder()
+                .name("Ada Nowa")
+                .phone("777-700-303")
+                .street("Lwowska 1a")
+                .city("Kraków")
+                .zipCode("25-100")
+                .email("adanowa@example.org")
+                .build();
+
+        PlaceOrderCommand command = PlaceOrderCommand
+                .builder()
+                .recipient(recipient)
+                .item(new OrderItem(javaKompendium, 9))
+                .item(new OrderItem(javowcaKompendium, 16))
+                .build();
+
+        orderSummary(command);
+    }
+
+    private void orderSummary(PlaceOrderCommand command) {
         PlaceOrderResponse response = placeOrder.placeOrder(command);
+
         System.out.println("Created order with ID: " + response.getOrderId());
 
         queryOrder.findAll()
@@ -86,7 +122,7 @@ public class ApplicationStartup implements CommandLineRunner {
     }
 
     private void initData() {
-        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", "Tonny Gaddis", 2019, new BigDecimal ("21.90")));
+        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", "Tonny Gaddis", 2019, new BigDecimal ("121.90")));
         catalog.addBook(new CreateBookCommand("Czysty kod", "C. Martin", 2018, new BigDecimal ("29.90")));
         catalog.addBook(new CreateBookCommand("Kompedium programisty, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("49.90")));
         catalog.addBook(new CreateBookCommand("Kompedium javowca, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("48.90")));

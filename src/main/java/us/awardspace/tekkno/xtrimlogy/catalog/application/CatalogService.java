@@ -80,7 +80,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public UpdateBookResponse updateBook(UpdateBookCommand command) {
-      return   repository
+      return  repository
                 .findById(command.getId())
                 .map(book -> {
                     Book updatedBook = command.updateFields(book);
