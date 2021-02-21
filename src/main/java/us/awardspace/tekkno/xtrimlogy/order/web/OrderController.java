@@ -22,6 +22,8 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static us.awardspace.tekkno.xtrimlogy.order.application.port.PlaceOrderUseCase.*;
+
 @RequestMapping("/orders")
 @RestController
 @AllArgsConstructor
@@ -46,15 +48,15 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Void> addOrder(@Valid @RequestBody RestOrderCommand command) {
-        PlaceOrderUseCase.PlaceOrderResponse order = place.placeOrder(command.toCreateCommand());
+        PlaceOrderResponse order = place.placeOrder(command.toCreateCommand());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/" + order.getOrderId().toString()).build().toUri();
         return ResponseEntity.created(uri).build();
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateOrder(@PathVariable Long id, @RequestBody RestOrderCommand command) {
-        PlaceOrderUseCase.PlaceOrderResponse response = place.updateOrder(command.toUpdateCommand(id));
+        PlaceOrderResponse response = place.updateOrder(command.toUpdateCommand(id));
         if(!response.isSuccess()) {
             String message = String.join(", ", response.getErrors());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
