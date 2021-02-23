@@ -3,8 +3,8 @@ package us.awardspace.tekkno.xtrimlogy.catalog.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase;
+import us.awardspace.tekkno.xtrimlogy.catalog.db.BookJpaRepository;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Book;
-import us.awardspace.tekkno.xtrimlogy.catalog.domain.CatalogRepository;
 import us.awardspace.tekkno.xtrimlogy.uploads.application.port.UploadUseCase;
 import us.awardspace.tekkno.xtrimlogy.uploads.application.port.UploadUseCase.SaveUploadCommand;
 import us.awardspace.tekkno.xtrimlogy.uploads.domain.Upload;
@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 class CatalogService implements CatalogUseCase {
-    private final CatalogRepository repository;
+
+    private final BookJpaRepository repository;
     private final UploadUseCase upload;
 
     @Override
@@ -92,7 +93,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public void removeById(Long id) {
-        repository.removeById(id);
+        repository.deleteById(id);
     }
 
     @Override

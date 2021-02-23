@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Book;
+import us.awardspace.tekkno.xtrimlogy.order.web.CreatedURI;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
@@ -95,7 +95,7 @@ public class CatalogController {
     }
 
     private URI createdBookUri(Book book) {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri().path("/" + book.getId().toString()).build().toUri();
+        return new CreatedURI("/" + book.getId().toString()).uri();
     }
 
     @Data

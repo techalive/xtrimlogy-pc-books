@@ -9,9 +9,8 @@ import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.Cr
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.UpdateBookCommand;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.UpdateBookResponse;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Book;
-import us.awardspace.tekkno.xtrimlogy.order.application.port.PlaceOrderUseCase;
-import us.awardspace.tekkno.xtrimlogy.order.application.port.PlaceOrderUseCase.PlaceOrderCommand;
-import us.awardspace.tekkno.xtrimlogy.order.application.port.PlaceOrderUseCase.PlaceOrderResponse;
+import us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase;
+import us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import us.awardspace.tekkno.xtrimlogy.order.application.port.QueryOrderUseCase;
 import us.awardspace.tekkno.xtrimlogy.order.domain.OrderItem;
 import us.awardspace.tekkno.xtrimlogy.order.domain.Recipient;
@@ -19,17 +18,19 @@ import us.awardspace.tekkno.xtrimlogy.order.domain.Recipient;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase.*;
+
 @Component
 public class ApplicationStartup implements CommandLineRunner {
 
     private final CatalogUseCase catalog;
-    private final PlaceOrderUseCase placeOrder;
+    private final ManipulateOrderUseCase placeOrder;
     private final QueryOrderUseCase queryOrder;
     private final String title;
     private final String author;
     private final Long limit;
 
-    public ApplicationStartup(CatalogUseCase catalog, PlaceOrderUseCase placeOrder, QueryOrderUseCase queryOrder, @Value("${xtrimlogy.catalog.query.title}") String title, @Value("${xtrimlogy.catalog.query.author}") String author, @Value("${xtrimlogy.catalog.limit}") Long limit) {
+    public ApplicationStartup(CatalogUseCase catalog, ManipulateOrderUseCase placeOrder, QueryOrderUseCase queryOrder, @Value("${xtrimlogy.catalog.query.title}") String title, @Value("${xtrimlogy.catalog.query.author}") String author, @Value("${xtrimlogy.catalog.limit}") Long limit) {
         this.catalog = catalog;
         this.placeOrder = placeOrder;
         this.queryOrder = queryOrder;
@@ -69,8 +70,8 @@ public class ApplicationStartup implements CommandLineRunner {
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
                 .recipient(recipient)
-                .item(new OrderItem(efektywneProgramowanie, 12))
-                .item(new OrderItem(czystyKod, 50))
+                .item(new OrderItem(efektywneProgramowanie.getId(), 12))
+                .item(new OrderItem(czystyKod.getId(), 50))
                 .build();
 
         orderSummary(command);
@@ -81,7 +82,6 @@ public class ApplicationStartup implements CommandLineRunner {
                 .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
         Book javowcaKompendium = catalog.findOneByTitle("Kompendium programisty Javy, wyd XI")
                 .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
-
         Recipient recipient = Recipient
                 .builder()
                 .name("Ada Nowa")
@@ -95,8 +95,8 @@ public class ApplicationStartup implements CommandLineRunner {
         PlaceOrderCommand command = PlaceOrderCommand
                 .builder()
                 .recipient(recipient)
-                .item(new OrderItem(javaKompendium, 9))
-                .item(new OrderItem(javowcaKompendium, 16))
+                .item(new OrderItem(javaKompendium.getId(), 9))
+                .item(new OrderItem(javowcaKompendium.getId(), 16))
                 .build();
 
         orderSummary(command);
@@ -105,12 +105,14 @@ public class ApplicationStartup implements CommandLineRunner {
     private void orderSummary(PlaceOrderCommand command) {
         PlaceOrderResponse response = placeOrder.placeOrder(command);
 
-        System.out.println("Created order with ID: " + response.getOrderId());
+        String result = response.handle(
+                orderId -> "Created ORDER with id: " + orderId,
+                error -> "Failed to created order: " + error
+        );
+        System.out.println(result);
 
         queryOrder.findAll()
-                .forEach(order -> {
-                    System.out.println("Got order with total price: " + order.totalPrice() + " details: " + order);
-                });
+                .forEach(order -> System.out.println("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
     }
 
     private void searchCatalog() {
