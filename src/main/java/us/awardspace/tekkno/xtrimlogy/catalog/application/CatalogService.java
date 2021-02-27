@@ -3,7 +3,9 @@ package us.awardspace.tekkno.xtrimlogy.catalog.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase;
+import us.awardspace.tekkno.xtrimlogy.catalog.db.AuthorJpaRepository;
 import us.awardspace.tekkno.xtrimlogy.catalog.db.BookJpaRepository;
+import us.awardspace.tekkno.xtrimlogy.catalog.domain.Author;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Book;
 import us.awardspace.tekkno.xtrimlogy.uploads.application.port.UploadUseCase;
 import us.awardspace.tekkno.xtrimlogy.uploads.application.port.UploadUseCase.SaveUploadCommand;
@@ -12,6 +14,7 @@ import us.awardspace.tekkno.xtrimlogy.uploads.domain.Upload;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 class CatalogService implements CatalogUseCase {
 
     private final BookJpaRepository repository;
+    private final AuthorJpaRepository authorRepository;
     private final UploadUseCase upload;
 
     @Override
@@ -33,50 +37,45 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Book> findByTitle(String title) {
-        return repository.findAll()
-                         .stream()
-                         .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
-                         .collect(Collectors.toList());
+        return repository.findByTitleStartsWithIgnoreCase(title);
     }
 
     @Override
     public Optional<Book> findOneByTitle(String title) {
-        return repository.findAll()
-                .stream()
-                .filter(book -> book.getTitle().contains(title))
-                .findFirst();
+        return repository.findDistinctFirstByTitle(title);
     }
 
     @Override
     public List<Book> findByAuthor(String author) {
-        return repository.findAll()
-                         .stream()
-                         .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
-                         .collect(Collectors.toList());
+        return repository.findByAuthor(author);
     }
 
     @Override
     public List<Book> findByTitleAndAuthor(String title, String author) {
-        return repository.findAll()
-                .stream()
-                .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
-                .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<Book> findOneByTitleAndAuthor(String title, String author) {
-     return  repository.findAll()
-                  .stream()
-                  .filter(book -> book.getTitle().contains(title))
-                  .filter(book -> book.getAuthor().startsWith(author))
-                  .findFirst();
+        return repository.findByTitleAndAuthor(title, author);
     }
 
     @Override
     public Book addBook(CreateBookCommand command) {
-        Book book = command.toBook();
+        Book book = toBook(command);
         return repository.save(book);
+    }
+
+    private Book toBook(CreateBookCommand command) {
+        Book book = new Book(command.getTitle(), command.getYear(), command.getPrice());
+        Set<Author> authors = fetchAuthorsByIds(command.getAuthors());
+        book.setAuthors(authors);
+        return book;
+    }
+
+    private Set<Author> fetchAuthorsByIds(Set<Long> authors) {
+        return authors
+                .stream()
+                .map(authorId -> authorRepository
+                        .findById(authorId)
+                        .orElseThrow(() -> new IllegalArgumentException("Unable to find author with ID: " + authorId))
+                )
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -84,11 +83,28 @@ class CatalogService implements CatalogUseCase {
       return  repository
                 .findById(command.getId())
                 .map(book -> {
-                    Book updatedBook = command.updateFields(book);
+                    Book updatedBook = updateFields(command, book);
                     repository.save(updatedBook);
                     return UpdateBookResponse.SUCCESS;
                 })
                 .orElseGet(() -> new UpdateBookResponse(false, Collections.singletonList("Book not found with ID: " + command.getId())));
+    }
+
+    private Book updateFields(UpdateBookCommand command, Book book) {
+
+            if (command.getTitle() != null) {
+                book.setTitle(command.getTitle());
+            }
+            if (command.getAuthors() != null && !(command.getAuthors().isEmpty())) {
+                book.setAuthors(fetchAuthorsByIds(command.getAuthors()));
+            }
+            if (command.getYear() != null) {
+                book.setYear(command.getYear());
+            }
+            if (command.getPrice() != null) {
+                book.setPrice(command.getPrice());
+            }
+            return book;
     }
 
     @Override

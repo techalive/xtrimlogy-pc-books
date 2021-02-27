@@ -24,4 +24,15 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/orders/2
+GET http://localhost:8080/orders/
+
+###
+PUT http://localhost:8080/orders/9/status
+Content-Type: application/json
+
+{
+"status": "CONFIRMED"
+}
+
+
+###

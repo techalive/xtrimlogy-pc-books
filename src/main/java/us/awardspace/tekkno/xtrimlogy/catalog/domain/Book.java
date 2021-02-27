@@ -1,17 +1,17 @@
 package us.awardspace.tekkno.xtrimlogy.catalog.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "authors")
 @RequiredArgsConstructor
 @Entity
 public class Book {
@@ -19,14 +19,17 @@ public class Book {
    @GeneratedValue(strategy = GenerationType.AUTO)
    private Long id;
    private String title;
-   private String author;
    private Integer year;
    private BigDecimal price;
-   private String coverId;
+   private Long coverId;
 
-   public Book(String title, String author, Integer year, BigDecimal price) {
+   @JsonIgnoreProperties("books")
+   @ManyToMany(fetch = FetchType.EAGER)
+   @JoinTable
+   private Set<Author> authors;
+
+   public Book(String title, Integer year, BigDecimal price) {
       this.title = title;
-      this.author = author;
       this.year = year;
       this.price = price;
    }

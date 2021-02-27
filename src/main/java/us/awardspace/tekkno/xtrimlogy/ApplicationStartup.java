@@ -1,6 +1,7 @@
 package us.awardspace.tekkno.xtrimlogy;
 
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,8 @@ import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.CreateBookCommand;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.UpdateBookCommand;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.UpdateBookResponse;
+import us.awardspace.tekkno.xtrimlogy.catalog.db.AuthorJpaRepository;
+import us.awardspace.tekkno.xtrimlogy.catalog.domain.Author;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Book;
 import us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase;
 import us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
@@ -17,32 +20,35 @@ import us.awardspace.tekkno.xtrimlogy.order.domain.Recipient;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import static us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase.*;
 
 @Component
+@AllArgsConstructor
 public class ApplicationStartup implements CommandLineRunner {
 
     private final CatalogUseCase catalog;
     private final ManipulateOrderUseCase placeOrder;
     private final QueryOrderUseCase queryOrder;
-    private final String title;
+    private final AuthorJpaRepository authorRepository;
+/*    private final String title;
     private final String author;
-    private final Long limit;
+    private final Long limit;*/
 
-    public ApplicationStartup(CatalogUseCase catalog, ManipulateOrderUseCase placeOrder, QueryOrderUseCase queryOrder, @Value("${xtrimlogy.catalog.query.title}") String title, @Value("${xtrimlogy.catalog.query.author}") String author, @Value("${xtrimlogy.catalog.limit}") Long limit) {
+/*    public ApplicationStartup(CatalogUseCase catalog, ManipulateOrderUseCase placeOrder, QueryOrderUseCase queryOrder, @Value("${xtrimlogy.catalog.query.title}") String title, @Value("${xtrimlogy.catalog.query.author}") String author, @Value("${xtrimlogy.catalog.limit}") Long limit) {
         this.catalog = catalog;
         this.placeOrder = placeOrder;
         this.queryOrder = queryOrder;
         this.title = title;
         this.author = author;
         this.limit = limit;
-    }
+    }*/
 
     @Override
     public void run(String... args) {
         initData();
-        searchCatalog();
+       // searchCatalog();
         placeOrder();
     }
 
@@ -80,7 +86,7 @@ public class ApplicationStartup implements CommandLineRunner {
     private void secondOrder() {
         Book javaKompendium = catalog.findOneByTitle("Kompedium programisty, wyd. X")
                 .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
-        Book javowcaKompendium = catalog.findOneByTitle("Kompendium programisty Javy, wyd XI")
+        Book javowcaKompendium = catalog.findOneByTitle("Efektywne programowanie")
                 .orElseThrow(() -> new IllegalStateException("Cannot find a book :-("));
         Recipient recipient = Recipient
                 .builder()
@@ -115,23 +121,33 @@ public class ApplicationStartup implements CommandLineRunner {
                 .forEach(order -> System.out.println("GOT ORDER WITH TOTAL PRICE: " + order.totalPrice() + " DETAILS: " + order));
     }
 
-    private void searchCatalog() {
+/*    private void searchCatalog() {
         findByTitle();
         findByAuthor();
         findAndUpdate();
         findByTitle();
         findByAuthor();
-    }
+    }*/
 
     private void initData() {
-        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", "Tonny Gaddis", 2019, new BigDecimal ("121.90")));
-        catalog.addBook(new CreateBookCommand("Czysty kod", "C. Martin", 2018, new BigDecimal ("29.90")));
-        catalog.addBook(new CreateBookCommand("Kompedium programisty, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("49.90")));
-        catalog.addBook(new CreateBookCommand("Kompedium javowca, wyd. X", "Herbert Schildt", 2019, new BigDecimal ("48.90")));
-        catalog.addBook(new CreateBookCommand("Efektywne programowanie", "Joshua Bloch", 2019, new BigDecimal ("47.90")));
+        Author gaddis = new Author("Tonny", "Gaddis");
+        Author martin = new Author("C", "Martin");
+        Author schildt = new Author("Herbert", "Schildt");
+        Author bloch = new Author("Joshua", "Bloch");
+        authorRepository.save(gaddis);
+        authorRepository.save(martin);
+        authorRepository.save(schildt);
+        authorRepository.save(bloch);
+
+
+        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", Set.of(gaddis.getId()), 2019, new BigDecimal ("121.90")));
+        catalog.addBook(new CreateBookCommand("Czysty kod", Set.of(martin.getId()), 2018, new BigDecimal ("29.90")));
+        catalog.addBook(new CreateBookCommand("Kompedium programisty, wyd. X", Set.of(schildt.getId()), 2019, new BigDecimal ("49.90")));
+        catalog.addBook(new CreateBookCommand("Kompedium javowca, wyd. X", Set.of(schildt.getId()), 2019, new BigDecimal ("48.90")));
+        catalog.addBook(new CreateBookCommand("Efektywne programowanie", Set.of(bloch.getId()), 2019, new BigDecimal ("47.90")));
     }
 
-    private void findByAuthor() {
+/*    private void findByAuthor() {
         List<Book> booksByAuthor = catalog.findByAuthor(author);
         booksByAuthor.stream().limit(limit).forEach(System.out::println);
     }
@@ -154,6 +170,6 @@ public class ApplicationStartup implements CommandLineRunner {
             UpdateBookResponse response = catalog.updateBook(command);
             System.out.println("Updating book result: " + response.isSuccess());
         });
-    }
+    }*/
 
 }
