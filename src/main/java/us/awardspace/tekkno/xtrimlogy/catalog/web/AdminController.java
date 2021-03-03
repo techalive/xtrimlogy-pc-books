@@ -1,54 +1,38 @@
-package us.awardspace.tekkno.xtrimlogy;
+package us.awardspace.tekkno.xtrimlogy.catalog.web;
 
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase;
-import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.CreateBookCommand;
-import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.UpdateBookCommand;
-import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase.UpdateBookResponse;
 import us.awardspace.tekkno.xtrimlogy.catalog.db.AuthorJpaRepository;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Author;
 import us.awardspace.tekkno.xtrimlogy.catalog.domain.Book;
 import us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase;
-import us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase.PlaceOrderCommand;
 import us.awardspace.tekkno.xtrimlogy.order.application.port.QueryOrderUseCase;
 import us.awardspace.tekkno.xtrimlogy.order.domain.OrderItem;
 import us.awardspace.tekkno.xtrimlogy.order.domain.Recipient;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
-import static us.awardspace.tekkno.xtrimlogy.order.application.port.ManipulateOrderUseCase.*;
-
-@Component
+@RestController
+@RequestMapping("/admin")
 @AllArgsConstructor
-public class ApplicationStartup implements CommandLineRunner {
+public class AdminController {
 
     private final CatalogUseCase catalog;
     private final ManipulateOrderUseCase placeOrder;
     private final QueryOrderUseCase queryOrder;
     private final AuthorJpaRepository authorRepository;
-/*    private final String title;
-    private final String author;
-    private final Long limit;*/
 
-/*    public ApplicationStartup(CatalogUseCase catalog, ManipulateOrderUseCase placeOrder, QueryOrderUseCase queryOrder, @Value("${xtrimlogy.catalog.query.title}") String title, @Value("${xtrimlogy.catalog.query.author}") String author, @Value("${xtrimlogy.catalog.limit}") Long limit) {
-        this.catalog = catalog;
-        this.placeOrder = placeOrder;
-        this.queryOrder = queryOrder;
-        this.title = title;
-        this.author = author;
-        this.limit = limit;
-    }*/
-
-    @Override
-    public void run(String... args) {
+    @PostMapping("/data")
+    @Transactional
+    public void initialize() {
         initData();
-       // searchCatalog();
+        // searchCatalog();
         placeOrder();
     }
 
@@ -73,7 +57,7 @@ public class ApplicationStartup implements CommandLineRunner {
                 .email("jkowalski@example.org")
                 .build();
 
-        PlaceOrderCommand command = PlaceOrderCommand
+        ManipulateOrderUseCase.PlaceOrderCommand command = ManipulateOrderUseCase.PlaceOrderCommand
                 .builder()
                 .recipient(recipient)
                 .item(new OrderItem(efektywneProgramowanie.getId(), 12))
@@ -98,7 +82,7 @@ public class ApplicationStartup implements CommandLineRunner {
                 .email("adanowa@example.org")
                 .build();
 
-        PlaceOrderCommand command = PlaceOrderCommand
+        ManipulateOrderUseCase.PlaceOrderCommand command = ManipulateOrderUseCase.PlaceOrderCommand
                 .builder()
                 .recipient(recipient)
                 .item(new OrderItem(javaKompendium.getId(), 9))
@@ -108,8 +92,8 @@ public class ApplicationStartup implements CommandLineRunner {
         orderSummary(command);
     }
 
-    private void orderSummary(PlaceOrderCommand command) {
-        PlaceOrderResponse response = placeOrder.placeOrder(command);
+    private void orderSummary(ManipulateOrderUseCase.PlaceOrderCommand command) {
+        ManipulateOrderUseCase.PlaceOrderResponse response = placeOrder.placeOrder(command);
 
         String result = response.handle(
                 orderId -> "Created ORDER with id: " + orderId,
@@ -140,11 +124,11 @@ public class ApplicationStartup implements CommandLineRunner {
         authorRepository.save(bloch);
 
 
-        catalog.addBook(new CreateBookCommand("Java dla zupełnie początkujących", Set.of(gaddis.getId()), 2019, new BigDecimal ("121.90")));
-        catalog.addBook(new CreateBookCommand("Czysty kod", Set.of(martin.getId()), 2018, new BigDecimal ("29.90")));
-        catalog.addBook(new CreateBookCommand("Kompedium programisty, wyd. X", Set.of(schildt.getId()), 2019, new BigDecimal ("49.90")));
-        catalog.addBook(new CreateBookCommand("Kompedium javowca, wyd. X", Set.of(schildt.getId()), 2019, new BigDecimal ("48.90")));
-        catalog.addBook(new CreateBookCommand("Efektywne programowanie", Set.of(bloch.getId()), 2019, new BigDecimal ("47.90")));
+        catalog.addBook(new CatalogUseCase.CreateBookCommand("Java dla zupełnie początkujących", Set.of(gaddis.getId()), 2019, new BigDecimal("121.90")));
+        catalog.addBook(new CatalogUseCase.CreateBookCommand("Czysty kod", Set.of(martin.getId()), 2018, new BigDecimal ("29.90")));
+        catalog.addBook(new CatalogUseCase.CreateBookCommand("Kompedium programisty, wyd. X", Set.of(schildt.getId()), 2019, new BigDecimal ("49.90")));
+        catalog.addBook(new CatalogUseCase.CreateBookCommand("Kompedium javowca, wyd. X", Set.of(schildt.getId()), 2019, new BigDecimal ("48.90")));
+        catalog.addBook(new CatalogUseCase.CreateBookCommand("Efektywne programowanie", Set.of(bloch.getId()), 2019, new BigDecimal ("47.90")));
     }
 
 /*    private void findByAuthor() {

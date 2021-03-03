@@ -9,6 +9,7 @@ import us.awardspace.tekkno.xtrimlogy.order.db.OrderJpaRepository;
 import us.awardspace.tekkno.xtrimlogy.order.domain.Order;
 import us.awardspace.tekkno.xtrimlogy.order.domain.OrderItem;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class QueryOrderService implements QueryOrderUseCase {
     private final BookJpaRepository catalogRepository;
 
     @Override
+    @Transactional
     public List<RichOrder> findAll() {
         return repository.findAll()
                 .stream()

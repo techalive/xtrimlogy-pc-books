@@ -1,26 +1,18 @@
 package us.awardspace.tekkno.xtrimlogy.order.domain;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Value;
+import lombok.*;
+import us.awardspace.tekkno.xtrimlogy.jpa.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Data
+@Getter
+@Setter
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
-public class OrderItem {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class OrderItem extends BaseEntity {
     private Long bookId;
     private int quantity;
-
-    public OrderItem(Long bookId, int quantity) {
-        this.bookId = bookId;
-        this.quantity = quantity;
-    }
 }
