@@ -14,10 +14,10 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Entity
 public class Recipient extends BaseEntity {
+   private String email;
    private String name;
    private String phone;
    private String street;
    private String city;
    private String zipCode;
-   private String email;
 }

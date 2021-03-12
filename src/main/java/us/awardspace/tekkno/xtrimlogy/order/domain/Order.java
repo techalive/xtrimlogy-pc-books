@@ -9,6 +9,7 @@ import us.awardspace.tekkno.xtrimlogy.jpa.BaseEntity;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 
 @Getter
@@ -27,7 +28,7 @@ public class Order extends BaseEntity {
 
    @OneToMany(cascade = CascadeType.ALL)
    @JoinColumn(name = "order_id")
-   private List<OrderItem> items;
+   private Set<OrderItem> items;
 
    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
    private Recipient recipient;
@@ -36,4 +37,9 @@ public class Order extends BaseEntity {
    @LastModifiedDate
    private LocalDateTime updatedAt;
 
+   public UpdateStatusResult updateStatus(OrderStatus newStatus) {
+      UpdateStatusResult result = this.status.updateStatus(newStatus);
+      this.status = result.getNewStatus();
+      return result;
+   }
 }

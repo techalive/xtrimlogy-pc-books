@@ -28,6 +28,7 @@ class CatalogService implements CatalogUseCase {
 
     @Override
     public List<Book> findAll() {
+
         return repository.findAllEager();
     }
 
@@ -64,7 +65,7 @@ class CatalogService implements CatalogUseCase {
     }
 
     private Book toBook(CreateBookCommand command) {
-        Book book = new Book(command.getTitle(), command.getYear(), command.getPrice());
+        Book book = new Book(command.getTitle(), command.getYear(), command.getPrice(), command.getAvailable());
         Set<Author> authors = fetchAuthorsByIds(command.getAuthors());
         updateBooks(book, authors);
         return book;

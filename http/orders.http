@@ -5,12 +5,12 @@ Content-Type: application/json
 {
   "items": [
     {
-      "bookId": 0,
-      "quantity": 2
+      "bookId": 5,
+      "quantity": 10
     },
     {
-      "bookId": 1,
-      "quantity": 1
+      "bookId": 7,
+      "quantity": 11
     }
   ],
   "recipient": {
@@ -24,14 +24,14 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/orders/
+GET http://localhost:8080/orders/18
 
 ###
-PUT http://localhost:8080/orders/9/status
+PUT http://localhost:8080/orders/25/status
 Content-Type: application/json
 
 {
-"status": "CONFIRMED"
+"status": "CANCELED"
 }
 
 

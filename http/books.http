@@ -2,3 +2,6 @@ GET http://localhost:8080/catalog
 Accept: application/json
 
 ###
+
+POST http://localhost:8080/admin/data
+Accept: application/json
