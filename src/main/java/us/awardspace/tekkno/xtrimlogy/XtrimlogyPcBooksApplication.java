@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import us.awardspace.tekkno.xtrimlogy.order.application.OrdersProperties;
 
 @EnableScheduling
-@EnableJpaAuditing
 @SpringBootApplication
 @EnableConfigurationProperties(OrdersProperties.class)
 public class XtrimlogyPcBooksApplication {

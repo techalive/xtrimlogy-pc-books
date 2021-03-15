@@ -23,6 +23,7 @@
 		<springdoc.openapi.ui.version>1.4.6</springdoc.openapi.ui.version>
 		<mysql.version>8.0.23</mysql.version>
 		<opencsv.version>5.3</opencsv.version>
+		<h2.version>1.4.199</h2.version>
 	</properties>
 
 
@@ -84,6 +85,12 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
