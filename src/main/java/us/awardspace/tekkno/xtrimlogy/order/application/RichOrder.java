@@ -1,6 +1,7 @@
 package us.awardspace.tekkno.xtrimlogy.order.application;
 
 import lombok.Value;
+import us.awardspace.tekkno.xtrimlogy.order.application.price.OrderPrice;
 import us.awardspace.tekkno.xtrimlogy.order.domain.OrderItem;
 import us.awardspace.tekkno.xtrimlogy.order.domain.OrderStatus;
 import us.awardspace.tekkno.xtrimlogy.order.domain.Recipient;
@@ -17,10 +18,7 @@ class RichOrder {
     Set<OrderItem> items;
     Recipient recipient;
     LocalDateTime createdAt;
+    OrderPrice orderPrice;
+    BigDecimal finalPrice;
 
-    public BigDecimal totalPrice() {
-        return items.stream()
-                .map(item -> item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }
