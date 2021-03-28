@@ -1,4 +1,4 @@
-[![Build status](http://travis-ci.com/techalive/xtrimlogy.svg?branch=master)](http://travis-ci.com/techalive/xtrimlogy)
+[![Build status](https://travis-ci.com/techalive/xtrimlogy-pc-books.svg?branch=master)](http://travis-ci.com/techalive/xtrimlogy-pc-books)
 
 # Xtrimlogy ® - IT bookstore for programmers
 
