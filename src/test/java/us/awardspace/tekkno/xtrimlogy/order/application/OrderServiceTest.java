@@ -1,9 +1,12 @@
 package us.awardspace.tekkno.xtrimlogy.order.application;
 
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.annotation.DirtiesContext;
 import us.awardspace.tekkno.xtrimlogy.catalog.application.port.CatalogUseCase;
 import us.awardspace.tekkno.xtrimlogy.catalog.db.BookJpaRepository;
@@ -19,6 +22,7 @@ import us.awardspace.tekkno.xtrimlogy.order.domain.OrderStatus;
 import us.awardspace.tekkno.xtrimlogy.order.domain.Recipient;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.*;
@@ -66,12 +70,58 @@ class OrderServiceTest {
 
 
         //when
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, recipient);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, user(recipient));
         service.updateOrderStatus(command);
 
         //then
         assertEquals( 50L, availableCopiesOf(effectiveJava));
         assertEquals(OrderStatus.CANCELED, queryOrderService.findById(orderId).get().getStatus());
+    }
+
+/*    @Test
+    public void userCannotRevokePaidOrder() {
+        //given
+        Book effectiveJava = givenEffectiveJava(50L);
+        String marek = "marek@example.org";
+        Long orderId = placeOrder(effectiveJava.getId(), 15, marek);
+        assertEquals( 35L, availableCopiesOf(effectiveJava));
+
+
+        //when
+        UpdateStatusCommand paidCommand = new UpdateStatusCommand(orderId, OrderStatus.PAID, user(marek));
+        service.updateOrderStatus(paidCommand);
+        UpdateStatusCommand canceledCommand = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, user(marek));
+        service.updateOrderStatus(canceledCommand);
+
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.updateOrderStatus(canceledCommand));
+        assertEquals(OrderStatus.CANCELED, queryOrderService.findById(orderId).get().getStatus());
+        assertTrue(exception.getMessage().contains("Unable to mark " + OrderStatus.PAID + " order as " + OrderStatus.CANCELED));
+
+
+        //then
+       // assertEquals( 35L, availableCopiesOf(effectiveJava));
+
+    }*/
+
+    @Test
+    public void userCannotRevokeShippedOrder() {
+        //given
+        Book effectiveJava = givenEffectiveJava(50L);
+        String marek = "marek@example.org";
+        Long orderId = placeOrder(effectiveJava.getId(), 15, marek);
+        assertEquals( 35L, availableCopiesOf(effectiveJava));
+
+
+        //when
+        UpdateStatusCommand paidCommand = new UpdateStatusCommand(orderId, OrderStatus.PAID, user(marek));
+        service.updateOrderStatus(paidCommand);
+        UpdateStatusCommand shippedCommand = new UpdateStatusCommand(orderId, OrderStatus.SHIPPED, user(marek));
+        service.updateOrderStatus(shippedCommand);
+
+        //then
+        assertEquals( 35L, availableCopiesOf(effectiveJava));
+        assertEquals(OrderStatus.SHIPPED, queryOrderService.findById(orderId).get().getStatus());
     }
 
     @Test
@@ -84,7 +134,7 @@ class OrderServiceTest {
 
 
         //when
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, "marek@example.org");
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, user("marek@example.org"));
         service.updateOrderStatus(command);
 
         //then
@@ -103,8 +153,7 @@ class OrderServiceTest {
 
 
         //when
-        String admin = "admin@example.org";
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, admin);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.CANCELED, adminUser());
         service.updateOrderStatus(command);
 
         //then
@@ -124,7 +173,7 @@ class OrderServiceTest {
 
         //when
         String admin = "admin@example.org";
-        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.PAID, admin);
+        UpdateStatusCommand command = new UpdateStatusCommand(orderId, OrderStatus.PAID, adminUser());
         service.updateOrderStatus(command);
 
         //then
@@ -146,6 +195,20 @@ class OrderServiceTest {
 
         assertTrue(exception.getMessage().contains("Too many copies of book " + effectiveJava.getId() + " requested"));
     }
+
+/*    @Test
+    public void userCannotOrderNegativeNumberOfBooks() {
+        Book effectiveJava = givenEffectiveJava(5L);
+        PlaceOrderCommand command = PlaceOrderCommand
+                .builder()
+                .recipient(recipient())
+                .item(new OrderItemCommand(effectiveJava.getId(), -10))
+                .build();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.placeOrder(command));
+
+        assertTrue(exception.getMessage().contains("Too many copies of book " + effectiveJava.getId() + " requested"));
+    }*/
 
     @Test
     public void shippingCostsAreAddedToTotalOrderPrice() {
@@ -217,6 +280,15 @@ class OrderServiceTest {
     }
     private Book givenEffectiveJava(long available) {
         return bookRepository.save(new Book("Effective Java", 2005, new BigDecimal("199.90"), available));
+    }
+
+    private User user(String email) {
+       return new User(email, "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    }
+
+    private User adminUser() {
+        return new User("admin", "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
     }
 
     private Recipient recipient() {

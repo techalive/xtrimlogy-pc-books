@@ -3,5 +3,6 @@ Accept: application/json
 
 ###
 
-POST http://localhost:8080/admin/data
+POST http://localhost:8080/admin/initialization
 Accept: application/json
+Authorization: Basic admin xxx

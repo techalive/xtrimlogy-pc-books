@@ -1,15 +1,16 @@
 ###
 POST http://localhost:8080/orders
 Content-Type: application/json
+Authorization: Basic marek@example.org xxx
 
 {
   "items": [
     {
-      "bookId": 5,
+      "bookId": 96,
       "quantity": 10
     },
     {
-      "bookId": 7,
+      "bookId": 59,
       "quantity": 11
     }
   ],
@@ -19,12 +20,14 @@ Content-Type: application/json
     "street": "Cwiartki 3/4",
     "city": "Krakow",
     "zipCode": "30-150",
-    "email": "johndoe@example.org"
-  }
+    "email": "marek@example.org"
+  },
+  "delivery": "COURIER"
 }
 
 ###
-GET http://localhost:8080/orders/18
+GET http://localhost:8080/orders/119
+Authorization: Basic admin xxx
 
 ###
 PUT http://localhost:8080/orders/25/status
