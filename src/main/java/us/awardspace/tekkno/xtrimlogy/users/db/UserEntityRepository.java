@@ -1,7 +1,7 @@
-package us.awardspace.tekkno.xtrimlogy.user.db;
+package us.awardspace.tekkno.xtrimlogy.users.db;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import us.awardspace.tekkno.xtrimlogy.user.domain.UserEntity;
+import us.awardspace.tekkno.xtrimlogy.users.domain.UserEntity;
 
 import java.util.Optional;
 

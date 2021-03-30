@@ -3,8 +3,8 @@ package us.awardspace.tekkno.xtrimlogy.users.application;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import us.awardspace.tekkno.xtrimlogy.user.db.UserEntityRepository;
-import us.awardspace.tekkno.xtrimlogy.user.domain.UserEntity;
+import us.awardspace.tekkno.xtrimlogy.users.db.UserEntityRepository;
+import us.awardspace.tekkno.xtrimlogy.users.domain.UserEntity;
 import us.awardspace.tekkno.xtrimlogy.users.application.port.UserRegistrationUseCase;
 
 import javax.transaction.Transactional;

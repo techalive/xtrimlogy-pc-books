@@ -1,7 +1,7 @@
 package us.awardspace.tekkno.xtrimlogy.users.application.port;
 
 import us.awardspace.tekkno.xtrimlogy.commons.Either;
-import us.awardspace.tekkno.xtrimlogy.user.domain.UserEntity;
+import us.awardspace.tekkno.xtrimlogy.users.domain.UserEntity;
 
 public interface UserRegistrationUseCase {
     RegisterResponse register(String username, String password);

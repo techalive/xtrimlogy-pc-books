@@ -1,4 +1,4 @@
-package us.awardspace.tekkno.xtrimlogy.user.domain;
+package us.awardspace.tekkno.xtrimlogy.users.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

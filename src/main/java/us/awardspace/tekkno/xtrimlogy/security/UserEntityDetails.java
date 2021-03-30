@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import us.awardspace.tekkno.xtrimlogy.user.domain.UserEntity;
+import us.awardspace.tekkno.xtrimlogy.users.domain.UserEntity;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

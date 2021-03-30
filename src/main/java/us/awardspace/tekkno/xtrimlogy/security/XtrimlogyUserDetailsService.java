@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import us.awardspace.tekkno.xtrimlogy.user.db.UserEntityRepository;
+import us.awardspace.tekkno.xtrimlogy.users.db.UserEntityRepository;
 
 @AllArgsConstructor
 public class XtrimlogyUserDetailsService implements UserDetailsService {
