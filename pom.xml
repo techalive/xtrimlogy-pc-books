@@ -25,10 +25,16 @@
 		<opencsv.version>5.3</opencsv.version>
 		<h2.version>1.4.199</h2.version>
 		<postgresql.version>42.2.15.jre7</postgresql.version>
+		<flyway.version>6.5.7</flyway.version>
 	</properties>
 
 
 	<dependencies>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
