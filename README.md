@@ -4,7 +4,7 @@
 
 
 
-## Athor
+## Author
 * Adrian Czarniecki (techalive) - [LinkedIn.com](https://linkedin.com/in/adrian-czarniecki)
 
 ## Used technologies
